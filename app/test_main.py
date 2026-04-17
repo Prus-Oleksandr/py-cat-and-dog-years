@@ -16,7 +16,11 @@ from app.main import get_human_age, NegativeAgeError, LargeAgeError
         pytest.param(29, 29, [3, 3], id="after_third_step"),
     ]
 )
-def test_different_values(cat_age: int, dog_age: int, expected: list[int]) -> None:
+def test_different_values(
+        cat_age: int,
+        dog_age: int,
+        expected: list[int]
+) -> None:
     assert get_human_age(cat_age, dog_age) == expected
 
 
