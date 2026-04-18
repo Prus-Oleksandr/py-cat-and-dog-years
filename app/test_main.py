@@ -1,4 +1,5 @@
 import pytest
+from typing import Any, Type
 
 from app.main import get_human_age, NegativeAgeError, LargeAgeError
 
@@ -24,16 +25,25 @@ def test_different_values(
     assert get_human_age(cat_age, dog_age) == expected
 
 
-def test_negative_age() -> None:
-    with pytest.raises(NegativeAgeError):
-        get_human_age(-5, -5)
-
-
-def test_large_age() -> None:
-    with pytest.raises(LargeAgeError):
-        get_human_age(555555, 555555)
-
-
-def test_type_error() -> None:
-    with pytest.raises(TypeError):
-        get_human_age("5", [17])
+@pytest.mark.parametrize(
+    "cat_age,dog_age,name_of_exception",
+    [
+        pytest.param(-5, 15, NegativeAgeError, id="negative_age_Cat"),
+        pytest.param(0, -15, NegativeAgeError, id="negative_age_Dog"),
+        pytest.param(16666, 3, LargeAgeError, id="large_age_Cat"),
+        pytest.param(7, 48, LargeAgeError, id="large_age_Dog"),
+        pytest.param(None, 3, TypeError, id="Cat_None"),
+        pytest.param(4, "4", TypeError, id="Dog_str"),
+        pytest.param([12], 3, TypeError, id="Cat_list"),
+        pytest.param(4, 4.0, TypeError, id="Dog_float"),
+        pytest.param(False, 3, TypeError, id="Cat_bool"),
+        pytest.param(4, {"dog_age": 12}, TypeError, id="Dog_dict"),
+    ]
+)
+def test_incorrect_values(
+    cat_age: Any,
+    dog_age: Any,
+    name_of_exception: Type[Exception]
+) -> None:
+    with pytest.raises(name_of_exception):
+        get_human_age(cat_age, dog_age)
