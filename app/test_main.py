@@ -32,3 +32,8 @@ def test_negative_age() -> None:
 def test_large_age() -> None:
     with pytest.raises(LargeAgeError):
         get_human_age(555555, 555555)
+
+
+def test_type_error() -> None:
+    with pytest.raises(TypeError):
+        get_human_age("5", [17])
